@@ -1,9 +1,9 @@
 # Garage heating control with ESP8266
 
-## Board prerequisites:
+## Prerequisites:
 
 *Hardware:*
-- ESP8266
+- ESP8266 + wifi 2.4GHz internet access
 - DHT11 sensor/module
 - DS18B20 DallasTemperature module
 - 4K7 Ohms Resistor x2
@@ -18,10 +18,10 @@ needs Adafruit Unified Sensor library
 - DallasTemperature.h
 needs OneWire.h library
 
-
 *MQTT BROKER*
-- linux vps
-- mosquitto binary / acl setup
+- linux vps accessible ip
+- mosquitto.service
+- acl setup
 
 *MQTT Client Android*
 - MQTT Dash
@@ -31,3 +31,7 @@ needs OneWire.h library
 *Graphs*
 - tsdb export 
 - grafana / node_red ?
+
+*Automation*
+- terraform
+- build and test cpp from .ino (jinja2)
