@@ -1,6 +1,7 @@
 # Garage heating control with ESP8266
 
-Board prerequisites:
+## Board prerequisites:
+
 *Hardware:*
 - ESP8266
 - DHT11 sensor/module
@@ -23,10 +24,10 @@ needs OneWire.h library
 - mosquitto binary / acl setup
 
 *MQTT Client Android*
-
 - MQTT Dash
 
-*TODO*
+## TODO ##
 
+*Graphs*
 - tsdb export 
 - grafana / node_red ?
