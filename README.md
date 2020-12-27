@@ -6,6 +6,6 @@ ESP Garage
 - Wire hardware
 - Setup prerequisites
 - Setup servers
-- - broker
-- - object
-- - subject
+-- broker
+-- object
+-- subject
