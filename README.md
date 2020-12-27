@@ -27,10 +27,10 @@ needs OneWire.h library
 - acl anonymous pub
 
 *MQTT Client Android*
-- MQTT Dash
-* floor mode
-* min temp
-* max temp
+* MQTT Dash
+** floor mode
+** min temp
+** max temp
 
 ## TODO ##
 
