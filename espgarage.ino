@@ -27,7 +27,7 @@ const char *mqtt_server = "broker.kareta.ru";
 
 unsigned long lastSecond = 0;
 unsigned long lastSecond5 = 0;
-unsigned lond lasthour = 0;
+unsigned long lastHour = 0;
 unsigned long now;
 
 float h; // DHT Humidity
@@ -62,9 +62,14 @@ DHT dht(DHTPIN, DHTTYPE);
 
 
 //DeviceAddress d0address, d1address, d2address ;
-DeviceAddress d0address = { 0x28, 0x08, 0x0E, 0x45, 0x92, 0x0D, 0x02, 0x2E };
-DeviceAddress d1address = { 0x28, 0xE2, 0x94, 0x77, 0x91, 0x08, 0x02, 0x96 };
-DeviceAddress d2address = { 0x28, 0x59, 0x16, 0x45, 0x92, 0x12, 0x02, 0x81 };
+// DeviceAddress d0address = { 0x28, 0x08, 0x0E, 0x45, 0x92, 0x0D, 0x02, 0x2E };
+// DeviceAddress d1address = { 0x28, 0xE2, 0x94, 0x77, 0x91, 0x08, 0x02, 0x96 };
+// DeviceAddress d2address = { 0x28, 0x59, 0x16, 0x45, 0x92, 0x12, 0x02, 0x81 };
+
+DeviceAddress d0address = { 0x28, 0xB8, 0x5D, 0x79, 0x97, 0x02, 0x03, 0xDB };
+DeviceAddress d1address = { 0x28, 0xB8, 0x5D, 0x79, 0x97, 0x02, 0x03, 0xDB };
+DeviceAddress d2address = { 0x28, 0xB8, 0x5D, 0x79, 0x97, 0x02, 0x03, 0xDB };
+
 
 
 void reconnect()
@@ -116,8 +121,8 @@ void callback(char* topic, byte* payload, unsigned int length)
         }
     else if (inTopic == r2Topic) {
             stateR2 = intPayload.toInt();
-          Serial.print("new mode: ");
-          Serial.println(mode);
+          // Serial.print("new mode: ");
+          // Serial.println(mode);
              }
 
     else
@@ -232,46 +237,41 @@ void getSensorsAll(){
 
 
 void PublishData(){
-      // Publish section
+    // Publish section
     Serial.print("dallas0 temp: ");
     Serial.println(d0);
-    Serial.print("dallas1 temp: ");
-    Serial.println(d1);
-    Serial.print("dallas2 temp: ");
-    Serial.println(d2);
-    // Serial.print("R1 state: ");
-    // Serial.println(stateR1);
-    // Serial.print("duty mode: ");
-    // Serial.println(mode);
+    // Serial.print("dallas1 temp: ");
+    // Serial.println(d1);
+    // Serial.print("dallas2 temp: ");
+    // Serial.println(d2);
+    Serial.print("R1 state: ");
+    Serial.println(stateR1);
+    Serial.print("R2 state: ");
+    Serial.println(stateR2);
+    Serial.print("duty mode: ");
+    Serial.println(mode);
+    // Start publish
     snprintf(msg, MSG_BUFFER_SIZE, "%f", d0);
     client.publish(d0topic, msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%f", d1);
     client.publish(d1topic, msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%f", d2);
     client.publish(d2topic, msg);
-    // Serial.print("publish dallas0: ");
-    // Serial.println(msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%f", t);
     client.publish(ttopic, msg);
-    // Serial.print("publish dht temp: ");
-    // Serial.println(msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%f", h);
     client.publish(htopic, msg);
-    // Serial.print("publish dht humd: ");
-    // Serial.println(msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%i", stateR1);
     client.publish(r1topic, msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%i", stateR2);
     client.publish(r2topic, msg);
-    // Serial.print("publish relay 1 state: ");
-    // Serial.println(msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%i", mode);
     client.publish(modetopic, msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%i", dmax);
     client.publish(tmaxtopic, msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%i", dmin);
     client.publish(tmintopic, msg);
-    // // Serial.println(msg);
+    // End publish
 }
 
 
@@ -328,11 +328,11 @@ void loop()
     lastSecond5 = now;
   }
   // Poweroff timer for heater
-// if (now - lastHour > 3600000) 
-if (now - lastHour > 20000) 
+if (now - lastHour > 3600000) 
+// if (now - lastHour > 20000) 
   {
-    // stateR2 = CR2(0);
-    stateR2 = CR2(!stateR2);
+    if (stateR2 == 1) stateR2 = CR2(0);
+    // stateR2 = CR2(!stateR2);
     lastHour = now;
   }
 
