@@ -27,6 +27,7 @@ const char *mqtt_server = "broker.kareta.ru";
 
 unsigned long lastSecond = 0;
 unsigned long lastSecond5 = 0;
+unsigned lond lasthour = 0;
 unsigned long now;
 
 float h; // DHT Humidity
@@ -290,7 +291,7 @@ void setup()
 
   // Create a random client ID
   randomSeed(micros());
-  // clientId += String(random(0xffff), HEX);
+  clientId += String(random(0xffff), HEX);
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
   mode = dutyMode(0);
@@ -313,18 +314,26 @@ void loop()
 // 1 second run
   if (now - lastSecond > 2000) 
   {
-    // Get sensors data every second
+    // Get sensors data every 2 seconds
     getSensorsAll();
-    // ..or simulate getting data
+    // ..or simulate responce from floor heater
     // getSensorTest();
 //    Serial.println(stateR2);
     lastSecond = now;
   }
-  // Every 5 seconds publish data
-  if (now - lastSecond5 > 5000) 
+  // Every 10 seconds publish data
+  if (now - lastSecond5 > 10000) 
   {
     PublishData();
     lastSecond5 = now;
+  }
+  // Poweroff timer for heater
+// if (now - lastHour > 3600000) 
+if (now - lastHour > 20000) 
+  {
+    // stateR2 = CR2(0);
+    stateR2 = CR2(!stateR2);
+    lastHour = now;
   }
 
 // main RELAY1 logic
