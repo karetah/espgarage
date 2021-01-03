@@ -7,11 +7,20 @@
 #include <DHT.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+<<<<<<< HEAD
 #define RELAY1 LED_BUILTIN // 2 (D4) pulled output is inverted
 #define RELAY2 14 //D5
 // #define RELAY2 12 //D6
 // GPIO where the DS18B20 is connected to
 #define ONEWIREPIN 4 //D2
+=======
+//#define RELAY1 LED_BUILTIN // 2 (D4) pulled output is inverted
+#define RELAY1 14 //D5
+#define RELAY2 12 //D6
+  // GPIO where the DS18B20 is connected to
+#define ONEWIREPIN 4 //D2
+#define TEMPERATURE_PRECISION 10
+>>>>>>> main
 #define DHTPIN 5 // D1
 #define DHTTYPE DHT11 // DHT 11
 // #define DHTTYPE    DHT22     // DHT 22 (AM2302)
@@ -26,11 +35,20 @@ const char *mqtt_server = "broker.kareta.ru";
 
 unsigned long lastSecond = 0;
 unsigned long lastSecond5 = 0;
+<<<<<<< HEAD
+=======
+unsigned long lastHour = 0;
+>>>>>>> main
 unsigned long now;
 
 float h; // DHT Humidity
 float t; // DHT Temperature
 float d0; // DS18B20 index 0 Temperature
+<<<<<<< HEAD
+=======
+float d1; // DS18B20 index 0 Temperature
+float d2; // DS18B20 index 0 Temperature
+>>>>>>> main
 int stateR1=0; // Relay 1 state (floor switch)
 int stateR2=0; // Relay 2 state (heater switch)
 int mode; // Operating mode
@@ -42,11 +60,20 @@ const char *modetopic = "myesp/relay/mode";
 const char *tmintopic = "myesp/relay/tmin";
 const char *tmaxtopic = "myesp/relay/tmax";
 const char *d0topic = "myesp/sensors/d0";
+<<<<<<< HEAD
+=======
+const char *d1topic = "myesp/sensors/d1";
+const char *d2topic = "myesp/sensors/d2";
+>>>>>>> main
 const char *ttopic = "myesp/sensors/t";
 const char *htopic = "myesp/sensors/h";
 const char *r1topic = "myesp/relay/1";
 const char *r2topic = "myesp/relay/2";
+<<<<<<< HEAD
 String clientId = "ESP8266-";
+=======
+String clientId = "myesp-";
+>>>>>>> main
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -55,6 +82,19 @@ DallasTemperature sensors(&oneWire);
 DHT dht(DHTPIN, DHTTYPE);
 
 
+<<<<<<< HEAD
+=======
+//DeviceAddress d0address, d1address, d2address ;
+// DeviceAddress d0address = { 0x28, 0x08, 0x0E, 0x45, 0x92, 0x0D, 0x02, 0x2E };
+// DeviceAddress d1address = { 0x28, 0xE2, 0x94, 0x77, 0x91, 0x08, 0x02, 0x96 };
+// DeviceAddress d2address = { 0x28, 0x59, 0x16, 0x45, 0x92, 0x12, 0x02, 0x81 };
+
+DeviceAddress d0address = { 0x28, 0xB8, 0x5D, 0x79, 0x97, 0x02, 0x03, 0xDB };
+DeviceAddress d1address = { 0x28, 0xB8, 0x5D, 0x79, 0x97, 0x02, 0x03, 0xDB };
+DeviceAddress d2address = { 0x28, 0xB8, 0x5D, 0x79, 0x97, 0x02, 0x03, 0xDB };
+
+
+>>>>>>> main
 
 void reconnect()
 {
@@ -208,11 +248,24 @@ void getSensorsAll(){
     sensors.requestTemperatures();
     h = dht.readHumidity();
     t = dht.readTemperature();
+<<<<<<< HEAD
     d0 = sensors.getTempCByIndex(0);
+=======
+    delay(10);
+    d0 = sensors.getTempC(d0address);
+    delay(10);
+    d1 = sensors.getTempC(d1address);
+    delay(10);
+    d2 = sensors.getTempC(d2address);
+    delay(10);
+    if(d2 == DEVICE_DISCONNECTED_C) d2 = 127;
+  
+>>>>>>> main
 }
 
 
 void PublishData(){
+<<<<<<< HEAD
       // Publish section
     Serial.print("dallas0 temp: ");
     Serial.println(d0);
@@ -232,19 +285,52 @@ void PublishData(){
     client.publish(htopic, msg);
     // Serial.print("publish dht humd: ");
     // Serial.println(msg);
+=======
+    // Publish section
+    Serial.print("dallas0 temp: ");
+    Serial.println(d0);
+    // Serial.print("dallas1 temp: ");
+    // Serial.println(d1);
+    // Serial.print("dallas2 temp: ");
+    // Serial.println(d2);
+    Serial.print("R1 state: ");
+    Serial.println(stateR1);
+    Serial.print("R2 state: ");
+    Serial.println(stateR2);
+    Serial.print("duty mode: ");
+    Serial.println(mode);
+    // Start publish
+    snprintf(msg, MSG_BUFFER_SIZE, "%f", d0);
+    client.publish(d0topic, msg);
+    snprintf(msg, MSG_BUFFER_SIZE, "%f", d1);
+    client.publish(d1topic, msg);
+    snprintf(msg, MSG_BUFFER_SIZE, "%f", d2);
+    client.publish(d2topic, msg);
+    snprintf(msg, MSG_BUFFER_SIZE, "%f", t);
+    client.publish(ttopic, msg);
+    snprintf(msg, MSG_BUFFER_SIZE, "%f", h);
+    client.publish(htopic, msg);
+>>>>>>> main
     snprintf(msg, MSG_BUFFER_SIZE, "%i", stateR1);
     client.publish(r1topic, msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%i", stateR2);
     client.publish(r2topic, msg);
+<<<<<<< HEAD
     // Serial.print("publish relay 1 state: ");
     // Serial.println(msg);
+=======
+>>>>>>> main
     snprintf(msg, MSG_BUFFER_SIZE, "%i", mode);
     client.publish(modetopic, msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%i", dmax);
     client.publish(tmaxtopic, msg);
     snprintf(msg, MSG_BUFFER_SIZE, "%i", dmin);
     client.publish(tmintopic, msg);
+<<<<<<< HEAD
     // // Serial.println(msg);
+=======
+    // End publish
+>>>>>>> main
 }
 
 
@@ -258,6 +344,13 @@ void setup()
   delay(10);
   dht.begin();
   sensors.begin();
+<<<<<<< HEAD
+=======
+  sensors.setResolution(d0address, TEMPERATURE_PRECISION);
+  sensors.setResolution(d1address, TEMPERATURE_PRECISION);
+  sensors.setResolution(d2address, TEMPERATURE_PRECISION);
+
+>>>>>>> main
   // Create a random client ID
   randomSeed(micros());
   clientId += String(random(0xffff), HEX);
@@ -283,6 +376,7 @@ void loop()
 // 1 second run
   if (now - lastSecond > 2000) 
   {
+<<<<<<< HEAD
     // Get sensors data every second
     getSensorsAll();
     // ..or simulate getting data
@@ -292,14 +386,41 @@ void loop()
   }
   // Every 5 seconds publish data
   if (now - lastSecond5 > 5000) 
+=======
+    // Get sensors data every 2 seconds
+    getSensorsAll();
+    // ..or simulate responce from floor heater
+    // getSensorTest();
+//    Serial.println(stateR2);
+    lastSecond = now;
+  }
+  // Every 10 seconds publish data
+  if (now - lastSecond5 > 10000) 
+>>>>>>> main
   {
     PublishData();
     lastSecond5 = now;
   }
+<<<<<<< HEAD
 
 // main RELAY1 logic
   if (stateR1 == 1 && int(d0) > dmax) stateR1 = CR1(!stateR1);
   else if (stateR1 == 0 && int(d0) < dmin) stateR1 = CR1(!stateR1);
+=======
+  // Poweroff timer for heater
+if (now - lastHour > 3600000) 
+// if (now - lastHour > 20000) 
+  {
+    if (stateR2 == 1) stateR2 = CR2(0);
+    // stateR2 = CR2(!stateR2);
+    lastHour = now;
+  }
+
+// main RELAY1 logic
+  
+  if (stateR1 == 1 && int(d2) > dmax) stateR1 = CR1(!stateR1);
+  else if (stateR1 == 0 && int(d2) < dmin) stateR1 = CR1(!stateR1);
+>>>>>>> main
   else CR1(stateR1);
 
 stateR2 = CR2(stateR2); 
