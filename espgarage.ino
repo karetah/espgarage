@@ -9,8 +9,8 @@
 #include <DallasTemperature.h>
 #define RELAY1 LED_BUILTIN // 2 (D4) pulled output is inverted
 #define RELAY2 14 //D5
-//#define RELAY2 12 //D6
-  // GPIO where the DS18B20 is connected to
+// #define RELAY2 12 //D6
+// GPIO where the DS18B20 is connected to
 #define ONEWIREPIN 4 //D2
 #define DHTPIN 5 // D1
 #define DHTTYPE DHT11 // DHT 11
@@ -105,8 +105,8 @@ void callback(char* topic, byte* payload, unsigned int length)
         }
     else if (inTopic == r2Topic) {
             stateR2 = intPayload.toInt();
-          Serial.print("new mode: ");
-          Serial.println(mode);
+          // Serial.print("new mode: ");
+          // Serial.println(mode);
              }
 
     else
@@ -214,12 +214,12 @@ void getSensorsAll(){
 
 void PublishData(){
       // Publish section
-    // Serial.print("dallas0 temp: ");
-    // Serial.println(d0);
-    // Serial.print("R1 state: ");
-    // Serial.println(stateR1);
-    // Serial.print("duty mode: ");
-    // Serial.println(mode);
+    Serial.print("dallas0 temp: ");
+    Serial.println(d0);
+    Serial.print("R1 state: ");
+    Serial.println(stateR1);
+    Serial.print("duty mode: ");
+    Serial.println(mode);
     snprintf(msg, MSG_BUFFER_SIZE, "%f", d0);
     client.publish(d0topic, msg);
     // Serial.print("publish dallas0: ");
@@ -281,13 +281,13 @@ void loop()
 
 
 // 1 second run
-  if (now - lastSecond > 1000) 
+  if (now - lastSecond > 2000) 
   {
     // Get sensors data every second
-    //getSensorsAll();
+    getSensorsAll();
     // ..or simulate getting data
-    getSensorTest();
-    Serial.println(stateR2);
+    //getSensorTest();
+    // Serial.println(stateR2);
     lastSecond = now;
   }
   // Every 5 seconds publish data
