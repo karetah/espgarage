@@ -38,6 +38,7 @@ float d2; // DS18B20 index 0 Temperature
 int stateR1=0; // Relay 1 state (floor switch)
 int stateR2=0; // Relay 2 state (heater switch)
 int mode; // Operating mode
+int dcrit = 35; // Critical temp
 int dmax; // Floor max (27-30 C)
 int dmin; // Floor min (2-3 C)
 int tmax; 
@@ -345,6 +346,7 @@ if (now - lastHour > 3600000)
   if (stateR1 == 1 && int(d2) > dmax) stateR1 = CR1(!stateR1);
   else if (stateR1 == 0 && int(d2) < dmin) stateR1 = CR1(!stateR1);
   else CR1(stateR1);
+  if (int(d2) > dcrit) CR1(0);
 
 stateR2 = CR2(stateR2); 
 }
