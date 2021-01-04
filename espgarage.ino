@@ -235,9 +235,9 @@ void getSensorsAll(){
     delay(10);
     d2 = sensors.getTempC(d2address);
     delay(10);
-    if(d0 == DEVICE_DISCONNECTED_C) d0 = d0prev;    
-    if(d1 == DEVICE_DISCONNECTED_C) d1 = d1prev;
-    if(d2 == DEVICE_DISCONNECTED_C) d2 = d2prev;
+    if((d0 == DEVICE_DISCONNECTED_C) || (d0 < (d0prev - 100)) || (d0 > (d0prev + 100))) d0 = d0prev;    
+    if((d1 == DEVICE_DISCONNECTED_C) || (d1 < (d1prev - 100)) || (d1 > (d1prev + 100))) d1 = d1prev;
+    if((d2 == DEVICE_DISCONNECTED_C) || (d2 < (d2prev - 100)) || (d2 > (d2prev + 100))) d2 = d2prev;
 }
 
 
