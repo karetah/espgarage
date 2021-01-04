@@ -221,6 +221,9 @@ void getSensorTest(){
 }
 
 void getSensorsAll(){
+    float d0prev = d0;
+    float d1prev = d1;
+    float d2prev = d2;
     sensors.requestTemperatures();
     h = dht.readHumidity();
     t = dht.readTemperature();
@@ -231,8 +234,9 @@ void getSensorsAll(){
     delay(10);
     d2 = sensors.getTempC(d2address);
     delay(10);
-    if(d2 == DEVICE_DISCONNECTED_C) d2 = 127;
-  
+    if(d0 == DEVICE_DISCONNECTED_C) d0 = d0prev;    
+    if(d1 == DEVICE_DISCONNECTED_C) d1 = d1prev;
+    if(d2 == DEVICE_DISCONNECTED_C) d2 = d2prev;
 }
 
 
@@ -324,7 +328,7 @@ void loop()
   // Every 10 seconds publish data
   if (now - lastSecond5 > 10000) 
   {
-    PublishData();
+    if (client.connected())  PublishData();
     lastSecond5 = now;
   }
   // Poweroff timer for heater
