@@ -174,7 +174,7 @@ void getAuto(){
       dmin++;
       dmax = dmin + 10;
     }
-    elseif ((t * 100) > tmax) {
+    else if ((t * 100) > tmax) {
       dmax--;
       dmin = dmax - 10;
     }
