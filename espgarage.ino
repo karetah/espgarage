@@ -39,12 +39,14 @@ float d1; // DS18B20 index 0 Temperature
 float d2; // DS18B20 index 0 Temperature
 int stateR1=0; // Relay 1 state (floor switch)
 int stateR2=0; // Relay 2 state (heater switch)
-int mode; // Operating mode
+int mode = 0; // Operating mode
 int dcrit = 27; // Critical temp
-int dmax; // Floor max (27-30 C)
-int dmin; // Floor min (2-3 C)
+int dmax; 
+int dmin; 
 int tmax; 
 int tmin;
+int mind2;
+int maxd2;
 const char *modetopic = "myesp/relay/mode";
 const char *tmintopic = "myesp/relay/tmin";
 const char *tmaxtopic = "myesp/relay/tmax";
@@ -169,14 +171,18 @@ void callback(char* topic, byte* payload, unsigned int length)
 
 // }
 void getAuto(){
-  if (mode = 0) {
+  if (mode == 0) {
     if ((t * 100) < tmin) {
       dmin++;
-      dmax = dmin + 10;
+      dmax = dmin + 1;
+      mind2 = d2 * 100;
     }
     else if ((t * 100) > tmax) {
-      dmax--;
-      dmin = dmax - 10;
+      if (dmax > 10) {
+        dmax--;
+        dmin = dmax - 10;
+      }
+      maxd2 = d2 * 100;
     }
   }
 
@@ -198,8 +204,8 @@ int dutyMode(int dM){
  //     getManual();
       return 3;
     default:
-      tmin = 801;
-      tmax = 1999;
+      tmin = 81;
+      tmax = 119;
       return 0;
   }
 }
@@ -254,18 +260,18 @@ void getSensorsAll(){
 
 void PublishData(){
     // Publish section
-    Serial.print("dallas0 temp: ");
-    Serial.println(d0);
+    // Serial.print("dallas0 temp: ");
+    // Serial.println(d0);
     // Serial.print("dallas1 temp: ");
     // Serial.println(d1);
     // Serial.print("dallas2 temp: ");
     // Serial.println(d2);
-    Serial.print("R1 state: ");
-    Serial.println(stateR1);
-    Serial.print("R2 state: ");
-    Serial.println(stateR2);
-    Serial.print("duty mode: ");
-    Serial.println(mode);
+    // Serial.print("R1 state: ");
+    // Serial.println(stateR1);
+    // Serial.print("R2 state: ");
+    // Serial.println(stateR2);
+    // Serial.print("duty mode: ");
+    // Serial.println(mode);
     // Start publish
     snprintf(msg, MSG_BUFFER_SIZE, "%f", d0);
     client.publish(d0topic, msg);
@@ -310,13 +316,14 @@ void setup()
   clientId += String(random(0xffff), HEX);
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-  mode = dutyMode(0);
-
+  mode = dutyMode(mode);
+  getSensorsAll();
+  getAuto();
 }
 
 void loop()
 {
-  mode = dutyMode(mode);
+
   now = millis();
   if (WiFi.status() == WL_CONNECTED) 
     {
@@ -351,7 +358,7 @@ if (now - lastMinute > 60000)
   {
     // int t60s = t10s;
     getAuto();
-    lastMinute - now;
+    lastMinute = now;
   }
   // ten mintes timer
 if (now - lastTen > 600000) 
@@ -373,11 +380,15 @@ if (now - lastHour > 3600000)
   }
 
 // main RELAY1 logic
-  
-  if (stateR1 == 1 && int(d2) > dmax) stateR1 = CR1(!stateR1);
-  else if (stateR1 == 0 && int(d2) < dmin) stateR1 = CR1(!stateR1);
-  else CR1(stateR1);
   if (int(d2) > dcrit) CR1(0);
+  else {
+    if (stateR1 == 1 && int(d2) > dmax) stateR1 = CR1(!stateR1);
+    else if (stateR1 == 0 && int(d2) < dmin) stateR1 = CR1(!stateR1);
+    else CR1(stateR1);
+  }
+
 
 stateR2 = CR2(stateR2); 
+
+mode = dutyMode(mode);
 }
