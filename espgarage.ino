@@ -26,7 +26,9 @@ const char *mqtt_server = "broker.kareta.ru";
 
 
 unsigned long lastSecond = 0;
-unsigned long lastSecond5 = 0;
+unsigned long lastSecond10 = 0;
+unsigned long lastMinute = 0;
+unsigned long lastTen = 0;
 unsigned long lastHour = 0;
 unsigned long now;
 
@@ -38,7 +40,7 @@ float d2; // DS18B20 index 0 Temperature
 int stateR1=0; // Relay 1 state (floor switch)
 int stateR2=0; // Relay 2 state (heater switch)
 int mode; // Operating mode
-int dcrit = 35; // Critical temp
+int dcrit = 27; // Critical temp
 int dmax; // Floor max (27-30 C)
 int dmin; // Floor min (2-3 C)
 int tmax; 
@@ -166,6 +168,19 @@ void callback(char* topic, byte* payload, unsigned int length)
 // void getManual(){
 
 // }
+void getAuto(){
+  if (mode = 0) {
+    if ((t * 100) < tmin) {
+      dmin++;
+      dmax = dmin + 10;
+    }
+    elseif ((t * 100) > tmax) {
+      dmax--;
+      dmin = dmax - 10;
+    }
+  }
+
+}
 
 int dutyMode(int dM){
   // hardcoded values for various modes
@@ -173,23 +188,18 @@ int dutyMode(int dM){
     case 1:
       dmin = 24;
       dmax = 27;
-      tmin = 10;
-      tmax = 15;
+
       return 1;
     case 2:
       dmin = 5;
       dmax = 10;
-      tmin = 2;
-      tmax = 5;
       return 2;
     case 3:
  //     getManual();
       return 3;
     default:
-      dmin = 2;
-      dmax = 5;
-      tmin = 1;
-      tmax = 3;
+      tmin = 801;
+      tmax = 1999;
       return 0;
   }
 }
@@ -235,6 +245,7 @@ void getSensorsAll(){
     delay(10);
     d2 = sensors.getTempC(d2address);
     delay(10);
+    // eliminate dallas errors
     if((d0 == DEVICE_DISCONNECTED_C) || (d0 < (d0prev - 100)) || (d0 > (d0prev + 100))) d0 = d0prev;    
     if((d1 == DEVICE_DISCONNECTED_C) || (d1 < (d1prev - 100)) || (d1 > (d1prev + 100))) d1 = d1prev;
     if((d2 == DEVICE_DISCONNECTED_C) || (d2 < (d2prev - 100)) || (d2 > (d2prev + 100))) d2 = d2prev;
@@ -327,15 +338,35 @@ void loop()
     lastSecond = now;
   }
   // Every 10 seconds publish data
-  if (now - lastSecond5 > 10000) 
+  if (now - lastSecond10 > 10000) 
   {
     if (client.connected())  PublishData();
-    lastSecond5 = now;
+
+    // int t10s = t * 10;
+    lastSecond10 = now;
   }
-  // Poweroff timer for heater
+  // one minte timer
+if (now - lastMinute > 60000) 
+// if (now - lastHour > 20000) 
+  {
+    // int t60s = t10s;
+    getAuto();
+    lastMinute - now;
+  }
+  // ten mintes timer
+if (now - lastTen > 600000) 
+// if (now - lastHour > 20000) 
+  {
+    // int t10m = t60s;
+    lastTen = now;
+  }
+
+  // 1 hour timer
 if (now - lastHour > 3600000) 
 // if (now - lastHour > 20000) 
   {
+    // int t60m = t10m;
+    // power off the heater
     if (stateR2 == 1) stateR2 = CR2(0);
     // stateR2 = CR2(!stateR2);
     lastHour = now;

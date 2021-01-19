@@ -1,0 +1,4 @@
+#20210105
+* add dallas checks (-172, > 100, < 100) previous value
+#20210119
+* addedlastMinute
