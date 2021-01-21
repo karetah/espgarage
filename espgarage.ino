@@ -180,7 +180,7 @@ void getAuto(){
     else if ((t * 100) > tmax) {
       if (dmax > 10) {
         dmax--;
-        dmin = dmax - 10;
+        dmin = dmax - 1;
       }
       maxd2 = d2 * 100;
     }
