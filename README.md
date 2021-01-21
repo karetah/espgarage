@@ -8,7 +8,7 @@ Ok...
 
 I have a concrete garage, sized 3 x 6 m
 
-The walls is covered with the "Vagonka" wood, maiden by the previous owner. (I don't know what is between its, perhaps air, oh yes!)
+The walls are covered with the "Vagonka" wood, made by the previous owner. (I don't know what is between the wood and concrete. Perhaps air, oh yes!)
 
 The ceiling is the concrete plates, the roof is not leaking.
 
