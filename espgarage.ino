@@ -173,16 +173,19 @@ void callback(char* topic, byte* payload, unsigned int length)
 void getAuto(){
   if (mode == 0) {
     if ((t * 100) < tmin) {
-      dmin++;
-      dmax = dmin + 1;
-      mind2 = d2 * 100;
+      if (dmax < dcrit) {
+        dmin++;
+        dmax = dmin + 1;
+        // mind2 = d2 * 100;
+        }
+
     }
     else if ((t * 100) > tmax) {
       if (dmax > 10) {
         dmax--;
         dmin = dmax - 10;
       }
-      maxd2 = d2 * 100;
+      // maxd2 = d2 * 100;
     }
   }
 
